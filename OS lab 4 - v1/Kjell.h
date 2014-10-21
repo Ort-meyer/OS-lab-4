@@ -19,7 +19,7 @@ public:
 private:
 	//member methods
 	void PrintHelp();
-	string* Split(string p_string, char p_target);
+	vector<string> Split(string p_string, string p_target);
 	char* ReadBlock();
 	string ReadLine();
 	void DumpArray(string p_stringArray[]);
