@@ -12,17 +12,35 @@ using namespace std;
 
 void VoidExperiment()
 {
-	char* type = "1";
-	char* name = "John";
-	int* size = 0;
-	char* text = "123";
+	char type = '1';
+	const char* name = "John";
+	int size = 15764;
+	const char* text = "123";
 
-	void* data;
-	data = size;
-	cout << sizeof(data)<<endl;
-	int* poststring = (int*)data;
 
-	//cout << *poststring;
+
+	unsigned char data[512];
+
+	memccpy(data, &type, 0, 1);
+	memccpy(data, name, 1, 4);
+	memccpy(data, &size, 5, sizeof(int));
+
+	memcpy(data, &type, 1);
+	memcpy(data + 1, name, 4);
+	memcpy(data + 5, &size, sizeof(int));
+
+	int postInt;
+	memcpy(&postInt, data + 5, sizeof(int));
+
+
+	for (int i = 0; i < 5;i++)
+	{
+		cout << data[i];
+	}
+	cout << postInt;
+
+	int derp;
+	derp = 2;
 
 
 
