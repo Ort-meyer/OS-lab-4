@@ -196,10 +196,18 @@ string FileSystem::Copy(vector<string> p_path, vector<string> p_destination)
 	return "File copied";
 }
 
-//string FileSystem::Append(string p_source[], string p_destination[])
-//{
-//	//append file
-//}
+string FileSystem::Append(vector<string> p_path, char* p_newContent)
+{
+	//append file
+	short t_block = Traverse(p_path);
+
+	char* t_data = m_memoryBlock->ReadData(t_block);
+	memcpy(t_data + strlen(t_data), &p_newContent, strlen(p_newContent));
+
+	m_memoryBlock->WriteData(t_block, t_data);
+
+	return "Succeded";
+}
 
 string FileSystem::Rename(vector<string> p_source, char* p_destination)
 {
@@ -308,7 +316,8 @@ short FileSystem::Traverse(vector<string> p_path)
 			else
 			{
 				t_targetBlock = t_currentParent;
-				break;
+				t_currentPathSegment++;
+				t_folderFound = true;
 			}
 		}
 		else

@@ -83,7 +83,13 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "append")
 		{
+			vector<string>t_path = Split(t_inputArray[1], "/");
+			cout << "Content to add: " << endl;
+			string t_contentString;
+			getline(cin, t_contentString);
+			char* t_content = const_cast<char*>(t_contentString.c_str());
 
+			m_fileSystem->Append(t_path, t_content);
 		}
 		else if (t_inputArray[0] == "rename")
 		{
