@@ -128,7 +128,8 @@ string FileSystem::Cat(vector<string> p_path)
 
 	//file found, read content
 	string t_return;
-	t_return.assign(m_memoryBlock->ReadData());
+	t_return.assign(m_memoryBlock->Rea
+		dData());
 
 	return t_return;
 

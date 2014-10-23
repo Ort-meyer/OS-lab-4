@@ -4,11 +4,7 @@
 #include <vector>
 
 
-#define NAMEOFFSET 1
-#define NEXTOFFSET 21
-#define SIZEOFFSET 23
-#define PARENTOFFSET 27
-#define DATAOFFSET 29
+
 
 using namespace std;
 class FileSystem
@@ -44,7 +40,7 @@ private:
 
 	short m_currentBlock; //the current folder the file system is in
 
-	int m_blockCounter; //index for next avaliable block
+	short m_blockCounter; //index for next avaliable block
 	vector<int> m_freeblocks; //list of avaliable bloocks (when blocks are removed their indices are put in this list)
 
 };
