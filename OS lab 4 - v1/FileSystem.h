@@ -18,15 +18,16 @@ public:
 	//member methods
 	string Format();													//done
 	vector<string> ls();												//doneish
-	string Create(char* p_name, char* p_contents);
-	string Cat(vector<string> p_path);
+	vector<string> ls(short p_block);									//done
+	string Create(char* p_name, char* p_contents);						//done
+	string Cat(vector<string> p_path);									//done
 	string Save(string p_path);
 	string Read(string p_path);
 	string Save1(string p_path);
 	string Read1(string p_path);
 	string rm(string p_path[]);
-	string Copy(vector<string> p_path, vector<string> p_destination);
-	string Append(string p_source[], string p_destination[]);
+	string Copy(vector<string> p_path, vector<string> p_destination);	//done
+	string Append(vector<string> p_path, char* p_newContent);
 	string Rename(vector<string> p_source, char* p_destination);		//done
 	string mkdir(const char* p_name);									//doneish
 	string cd(vector<string> p_path);									//done

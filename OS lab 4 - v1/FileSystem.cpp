@@ -42,6 +42,25 @@ vector<string> FileSystem::ls()
 	}
 	return t_contentNames;
 }
+
+vector<string> FileSystem::ls(short p_block)
+{
+	//read size
+	int t_numContent = m_memoryBlock->ReadSize(p_block);
+	//read data
+	short* t_contentBlocks = m_memoryBlock->ReadFolderData(p_block);
+
+	//get stuff in folder
+	vector<string> t_contentNames;
+	for (int i = 0; i < t_numContent; i++)
+	{
+		char* t_currentBlockName = m_memoryBlock->ReadName(t_contentBlocks[i]);
+		string t_string;
+		t_contentNames.push_back(t_string.assign(t_currentBlockName));
+	}
+	return t_contentNames;
+}
+
 string FileSystem::Create(char* p_name, char* p_contents)
 {
 	//create file
@@ -196,7 +215,7 @@ string FileSystem::Read(string p_path)
 				//m_memoryBlock->WriteParentBlock(i, *t_parent);
 				//m_memoryBlock->WriteData(i, t_blockData);
 				//
-				
+
 
 				if (i > 511)
 				{
@@ -238,14 +257,31 @@ string FileSystem::Read(string p_path)
 string FileSystem::Copy(vector<string> p_path, vector<string> p_destination)
 {
 	//copy file
+	short t_sourceFile = Traverse(p_path);
+	short t_destinationFolder = Traverse(p_destination);
+
+	char* t_data = m_memoryBlock->ReadBlock(t_sourceFile);
+	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
+	m_memoryBlock->WriteParentBlock(m_blockCounter, t_destinationFolder);
+	AddToFolder(t_destinationFolder, m_blockCounter);
+
+	m_blockCounter++;
 
 	return "File copied";
 }
 
-//string FileSystem::Append(string p_source[], string p_destination[])
-//{
-//	//append file
-//}
+string FileSystem::Append(vector<string> p_path, char* p_newContent)
+{
+	//append file
+	short t_block = Traverse(p_path);
+
+	char* t_data = m_memoryBlock->ReadData(t_block);
+	memcpy(t_data + strlen(t_data), &p_newContent, strlen(p_newContent));
+
+	m_memoryBlock->WriteData(t_block, t_data);
+
+	return "Succeded";
+}
 
 string FileSystem::Rename(vector<string> p_source, char* p_destination)
 {
@@ -329,7 +365,7 @@ string FileSystem::CreateRootFolder(char* p_name)
 
 short FileSystem::Traverse(vector<string> p_path)
 {
-	short t_targetBlock;
+	short t_targetBlock = m_currentBlock;
 
 	int t_pathLength = p_path.size();
 	int t_currentPathSegment = 0;
@@ -337,9 +373,9 @@ short FileSystem::Traverse(vector<string> p_path)
 	while (t_currentPathSegment < t_pathLength)
 	{
 		//get all subfolder names
-		vector<string>t_currentContent = ls();
+		vector<string>t_currentContent = ls(t_targetBlock);
 		//get subfolder indices
-		char* t_currentData = m_memoryBlock->ReadBlock(m_currentBlock);
+		char* t_currentData = m_memoryBlock->ReadBlock(t_targetBlock);
 		short* t_currentContentIndices = new short;
 		memcpy(t_currentContentIndices, t_currentData + DATAOFFSET, t_currentContent.size() * 2);
 
@@ -347,19 +383,21 @@ short FileSystem::Traverse(vector<string> p_path)
 
 		if (p_path[t_currentPathSegment] == "..")
 		{
-			short* t_currentParent = new short;
-			memcpy(t_currentParent, t_currentData + PARENTOFFSET, 2);
-			if (*t_currentParent == -1)
+			short t_currentParent = m_memoryBlock->ReadParentBlock(t_targetBlock);
+			//memcpy(t_currentParent, t_currentData + PARENTOFFSET, 2);
+			if (t_currentParent == -1)
 			{
 				return -1;
 			}
 			else
 			{
-				t_targetBlock = *t_currentParent;
-				return t_targetBlock;
+				t_targetBlock = t_currentParent;
+				t_currentPathSegment++;
+				t_folderFound = true;
 			}
 		}
-
+		else
+		{
 		//compare subfolder names to path
 		for (int i = 0; i < t_currentContent.size(); i++)
 		{
@@ -372,6 +410,8 @@ short FileSystem::Traverse(vector<string> p_path)
 				break;
 			}
 		}
+		}
+
 		if (!t_folderFound)
 		{
 			return -1;
