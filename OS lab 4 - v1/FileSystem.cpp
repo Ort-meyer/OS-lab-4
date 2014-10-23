@@ -247,6 +247,7 @@ short FileSystem::Traverse(vector<string> p_path)
 			return -1;
 		}
 	}
+	return t_targetBlock;
 }
 
 //string FileSystem::pwd()
