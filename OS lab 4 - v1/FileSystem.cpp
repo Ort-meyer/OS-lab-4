@@ -33,7 +33,7 @@ vector<string> FileSystem::ls()
 	int t_numContent = m_memoryBlock->ReadSize(m_currentBlock);
 	//memcpy(&t_numContent, t_data + SIZEOFFSET, 4);
 	// t_contentBlocks = new short;
-	 short* t_contentBlocks = m_memoryBlock->ReadFolderData(m_currentBlock);
+	short* t_contentBlocks = m_memoryBlock->ReadFolderData(m_currentBlock);
 
 	//memcpy(t_contentBlocks, t_data + DATAOFFSET, t_numContent * 2); //t_numContent*2 since each short is two bytes
 
@@ -61,7 +61,7 @@ string FileSystem::Create(char* p_name, char* p_contents)
 
 	//memcpy(t_data, &t_type, sizeof(short));
 	//memcpy(t_data + NAMEOFFSET, &p_name, sizeof(p_name));
-	
+
 	m_memoryBlock->WriteType(m_blockCounter, '0');
 	m_memoryBlock->WriteName(m_blockCounter, p_name);
 	m_memoryBlock->WriteNextBlock(m_blockCounter, -1);
@@ -184,7 +184,7 @@ string FileSystem::mkdir(const char* p_name)
 	memcpy(t_data + NAMEOFFSET, p_name, 20);
 	memcpy(t_data + NEXTOFFSET, &t_next, 2);
 	memcpy(t_data + SIZEOFFSET, &t_size, 4);
-	memcpy(t_data + PARENTOFFSET, &t_parent, 2); 
+	memcpy(t_data + PARENTOFFSET, &t_parent, 2);
 	memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
 
 	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
@@ -270,10 +270,10 @@ string FileSystem::cd(vector<string> p_path)
 	}
 	return "directory changed";
 }
-//string FileSystem::pwd()
-//{
-//	//write name of folder
-//}
+string FileSystem::pwd()
+{
+	return m_memoryBlock->ReadName(m_currentBlock);
+}
 
 string FileSystem::CreateRootFolder(char p_name[20])
 {
@@ -300,4 +300,22 @@ string FileSystem::CreateRootFolder(char p_name[20])
 
 	string derp;
 	return derp;
+}
+
+void FileSystem::AddToFolder(int p_folderNumber, short p_added)
+{
+	//Check if block is full
+	int t_parentSize = m_memoryBlock->ReadSize(p_folderNumber);
+	if (t_parentSize <= REMAINING - 1)//there' space left
+	{
+		//add the folder
+		m_memoryBlock->WriteFolderData(p_folderNumber, &p_added);
+		//update the size
+		t_parentSize++;
+		m_memoryBlock->WriteSize(p_folderNumber, t_parentSize);
+	}
+	else
+	{
+		//write to new block
+	}
 }
