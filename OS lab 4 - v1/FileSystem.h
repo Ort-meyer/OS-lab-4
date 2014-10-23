@@ -17,16 +17,16 @@ public:
 	FileSystem(MemoryBlock* p_memoryBlock);
 	~FileSystem();
 
-
+	
 	//member methods
 	string Format();
 	vector<string> ls();												//doneish
-	string Create(string p_path[], char p_contents[]);
-	string Cat(string p_path[]);
+	string Create(const char* p_name, const char* p_contents);
+	string Cat(vector<string> p_path);
 	string Save(string p_path[]);
 	string Read(string p_path[]);
 	string rm(string p_path[]);
-	string Copy(string p_source[], string p_destination[]);
+	string Copy(vector<string> p_path, vector<string> p_destination);
 	string Append(string p_source[], string p_destination[]);
 	string Rename(string p_source[], string p_destination[]);
 	string mkdir(const char* p_name);							//doneish
