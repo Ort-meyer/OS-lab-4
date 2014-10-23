@@ -2,6 +2,7 @@
 #include "MemoryBlock.h"
 #include <string>
 #include <vector>
+#include <fstream>
 
 
 
@@ -19,14 +20,14 @@ public:
 	vector<string> ls();												//doneish
 	string Create(char* p_name, char* p_contents);
 	string Cat(vector<string> p_path);
-	string Save(string p_path[]);
-	string Read(string p_path[]);
+	string Save(string p_path);
+	string Read(string p_path);
 	string rm(string p_path[]);
 	string Copy(vector<string> p_path, vector<string> p_destination);
 	string Append(string p_source[], string p_destination[]);
 	string Rename(string p_source[], string p_destination[]);
 	string mkdir(const char* p_name);									//doneish
-	string cd(vector<string> p_path);
+	string cd(vector<string> p_path);									//done
 	string pwd();														//done
 
 	string CreateRootFolder(char p_name[20]);							//done

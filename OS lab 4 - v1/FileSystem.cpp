@@ -18,31 +18,21 @@ string FileSystem::Format()
 {
 	delete m_memoryBlock;
 	m_memoryBlock = new MemoryBlock();
-	string derp;
-	return derp;
+	CreateRootFolder("root");
+	return "system formatted. New root Created";
 }
 
 vector<string> FileSystem::ls()
 {
-
-	vector<string> t_contentNames;
-	//get the data
-	char* t_data = m_memoryBlock->ReadBlock(m_currentBlock);
-
 	//read size
 	int t_numContent = m_memoryBlock->ReadSize(m_currentBlock);
-	//memcpy(&t_numContent, t_data + SIZEOFFSET, 4);
-	// t_contentBlocks = new short;
+	//read data
 	short* t_contentBlocks = m_memoryBlock->ReadFolderData(m_currentBlock);
 
-	//memcpy(t_contentBlocks, t_data + DATAOFFSET, t_numContent * 2); //t_numContent*2 since each short is two bytes
-
-	//vector<string> t_contentNames;
+	//get stuff in folder
+	vector<string> t_contentNames;
 	for (int i = 0; i < t_numContent; i++)
 	{
-		//char* t_currentData = m_memoryBlock->ReadBlock(t_contentBlocks[i]);
-		//char* t_currentBlockName = new char;
-		//memcpy(t_currentBlockName, t_currentData + NAMEOFFSET, 20);
 		char* t_currentBlockName = m_memoryBlock->ReadName(t_contentBlocks[i]);
 		string t_string;
 		t_contentNames.push_back(t_string.assign(t_currentBlockName));
@@ -53,15 +43,6 @@ string FileSystem::Create(char* p_name, char* p_contents)
 {
 	//create file
 
-	/*char t_type = '0';
-	short t_nextBlock = -1;
-	int t_size = 0;
-	short t_partent = m_currentBlock;
-	char* t_data;*/
-
-	//memcpy(t_data, &t_type, sizeof(short));
-	//memcpy(t_data + NAMEOFFSET, &p_name, sizeof(p_name));
-
 	m_memoryBlock->WriteType(m_blockCounter, '0');
 	m_memoryBlock->WriteName(m_blockCounter, p_name);
 	m_memoryBlock->WriteNextBlock(m_blockCounter, -1);
@@ -69,7 +50,8 @@ string FileSystem::Create(char* p_name, char* p_contents)
 	m_memoryBlock->WriteParentBlock(m_blockCounter, m_currentBlock);
 	m_memoryBlock->WriteData(m_blockCounter, p_contents);
 
-	//m_memoryBlock->AddContent(m_currentBlock, m_blockCounter);
+	//add to folder
+	AddToFolder(m_currentBlock, m_blockCounter);
 
 	m_blockCounter++;
 
@@ -139,14 +121,66 @@ string FileSystem::Cat(vector<string> p_path)
 
 }
 
-//string FileSystem::Save(string p_path[])
-//{
-//	//save system on file
-//}
-//string FileSystem::Read(string p_path[])
-//{
-//	//read system from file
-//}
+string FileSystem::Save(string p_path)
+{
+	//save system on file
+	ofstream t_file;
+	t_file.open(p_path); //ios::binary for optimization?
+	for (int i = 0; i < 250; i++)
+	{
+		if (m_memoryBlock->ReadType(i) != -1)
+		{
+
+			char* t_name = m_memoryBlock->ReadName(i);
+			//figure out how many chars in name (silly fix since it stops reading at an empty byte)
+			char t_data[512];
+			string t_nameString;
+			strcpy(t_data, t_nameString.c_str());
+			int t_nameLength = t_nameString.length();
+			//write data
+			t_file << m_memoryBlock->ReadType(i);
+			t_file << t_nameLength;
+			t_file << *t_name;
+			t_file << m_memoryBlock->ReadNextBlock(i);
+			t_file << m_memoryBlock->ReadSize(i);
+			t_file << m_memoryBlock->ReadParentBlock(i);
+			t_file << *m_memoryBlock->ReadData(i);
+			t_file << endl;
+			//t_file << m_memoryBlock->ReadBlock(i) << endl;
+		}
+	}
+	t_file.close();
+	return "system saved\n";
+}
+string FileSystem::Read(string p_path)
+{
+	//read system from file
+	Format();
+	m_memoryBlock = new MemoryBlock;
+	string t_line;
+	ifstream t_file(p_path, ios::binary);
+	int i = 0;
+	if (t_file.is_open())
+	{
+		while (getline(t_file, t_line))
+		{
+			if (!t_line.empty())
+			{
+				//get all data in one big char array
+				char t_data[512];
+				strcpy(t_data, t_line.c_str());
+
+
+				m_memoryBlock->WriteType(i, t_data[0]);
+
+
+
+				i++;
+			}
+		}
+	}
+	return "system read\n";
+}
 //string FileSystem::rm(string p_path[])
 //{
 //	//remove file

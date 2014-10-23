@@ -3,6 +3,10 @@
 
 MemoryBlock::MemoryBlock()
 {
+	for (int i = 0; i < 250; i++)
+	{
+		m_contents[i][0] = -1; //byte signaling unallocated block
+	}
 }
 
 

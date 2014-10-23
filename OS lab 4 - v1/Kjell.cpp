@@ -35,7 +35,7 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "format")
 		{
-			//m_fileSystem->Format();
+			m_fileSystem->Format();
 			cout << "it's all gone. Box still there tho" << endl;
 		}
 		else if (t_inputArray[0] == "ls")
@@ -56,11 +56,11 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "save")
 		{
-
+			m_fileSystem->Save(t_inputArray[1]);
 		}
 		else if (t_inputArray[0] == "read")
 		{
-
+			m_fileSystem->Read(t_inputArray[1]);
 		}
 		else if (t_inputArray[0] == "rm")
 		{
@@ -84,12 +84,7 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "cd")
 		{
-			//remove 
 			vector<string>t_path = Split(t_inputArray[1], "/");
-			//	t_inputArray;
-			//t_path.erase(t_path.begin());
-			//t_path.shrink_to_fit();
-
 			cout << m_fileSystem->cd(t_path) << endl;
 		}
 		else if (t_inputArray[0] == "pwd")
@@ -100,8 +95,6 @@ void Kjell::Start()
 		{
 
 		}
-
-
 
 		
 	}
