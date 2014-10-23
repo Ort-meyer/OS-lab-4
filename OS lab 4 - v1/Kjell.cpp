@@ -101,7 +101,7 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "pwd")
 		{
-			//cout << "Working directory: " << m_fileSystem->pwd() << endl;
+			cout << "Working directory: " << m_fileSystem->pwd() << endl;
 		}
 		else if (t_inputArray[0] == "help")
 		{
