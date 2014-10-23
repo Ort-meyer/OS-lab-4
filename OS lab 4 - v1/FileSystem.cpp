@@ -89,19 +89,19 @@ string FileSystem::Save(string p_path)
 			char* t_name = m_memoryBlock->ReadName(i);
 			//figure out how many chars in name (silly fix since it stops reading at an empty byte)
 			char t_data[512];
-			string t_nameString;
-			strcpy(t_data, t_nameString.c_str());
+			string t_nameString = t_name;
+
 			int t_nameLength = t_nameString.length();
 			//write data
+			//t_file << m_memoryBlock;
 			t_file << m_memoryBlock->ReadType(i);
 			t_file << t_nameLength;
-			t_file << *t_name;
+			t_file << t_name;
 			t_file << m_memoryBlock->ReadNextBlock(i);
 			t_file << m_memoryBlock->ReadSize(i);
 			t_file << m_memoryBlock->ReadParentBlock(i);
-			t_file << *m_memoryBlock->ReadData(i);
+			t_file << m_memoryBlock->ReadData(i);
 			t_file << endl;
-			//t_file << m_memoryBlock->ReadBlock(i) << endl;
 		}
 	}
 	t_file.close();
@@ -113,7 +113,7 @@ string FileSystem::Read(string p_path)
 	Format();
 	m_memoryBlock = new MemoryBlock;
 	string t_line;
-	ifstream t_file(p_path, ios::binary);
+	ifstream t_file(p_path);
 	int i = 0;
 	if (t_file.is_open())
 	{
@@ -122,14 +122,33 @@ string FileSystem::Read(string p_path)
 			if (!t_line.empty())
 			{
 				//get all data in one big char array
-				char t_data[512];
+				char* t_data = new char;
 				strcpy(t_data, t_line.c_str());
+				int t_nameSize;
+				memcpy(&t_nameSize, t_data + 1, 4);
 
+				char t_name[20];
+				memcpy(t_name, t_data + 2, 20);
+
+				short* t_next = new short;
+				memcpy(t_next, t_data + NEXTOFFSET, 2);
+
+				int* t_size = new int;
+				memcpy(t_size, t_data + SIZEOFFSET, 4);
+
+				short* t_parent = new short;
+				memcpy(t_parent, t_data + PARENTOFFSET, 2);
+
+				char* t_blockData = new char;
+				memcpy(t_blockData, t_blockData + DATAOFFSET, REMAINING);
 
 				m_memoryBlock->WriteType(i, t_data[0]);
-
-
-
+				m_memoryBlock->WriteName(i, t_name);
+				m_memoryBlock->WriteNextBlock(i, *t_next);
+				m_memoryBlock->WriteSize(i, *t_size);
+				m_memoryBlock->WriteParentBlock(i, *t_parent);
+				m_memoryBlock->WriteData(i, t_blockData);
+				
 				i++;
 			}
 		}
@@ -199,10 +218,10 @@ string FileSystem::cd(vector<string> p_path)
 	m_currentBlock = Traverse(p_path);
 	return "directory changed";
 }
-//string FileSystem::pwd()
-//{
-//	//write name of folder
-//}
+string FileSystem::pwd()
+{
+	return m_memoryBlock->ReadName(m_currentBlock);
+}
 
 string FileSystem::CreateRootFolder(char p_name[20])
 {

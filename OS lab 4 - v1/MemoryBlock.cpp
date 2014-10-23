@@ -97,7 +97,7 @@ short MemoryBlock::ReadParentBlock(int p_blockNumber)
 }
 char* MemoryBlock::ReadData(int p_blockNumber)
 {
-	char* t_data = new char;
+	char* t_data = new char[REMAINING];
 	memcpy(t_data, m_contents[p_blockNumber]+DATAOFFSET, REMAINING);
 	return t_data;
 }
