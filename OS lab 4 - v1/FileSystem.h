@@ -24,8 +24,8 @@ public:
 	string rm(string p_path[]);
 	string Copy(vector<string> p_path, vector<string> p_destination);
 	string Append(string p_source[], string p_destination[]);
-	string Rename(string p_source[], string p_destination[]);
-	string mkdir(const char* p_name);									//doneish
+	string Rename(vector<string> p_source, char* p_destination);
+	string mkdir(const char* p_name);							//doneish
 	string cd(vector<string> p_path);
 	string pwd();														//done
 
@@ -35,6 +35,7 @@ public:
 private:
 	//member methods
 	void DumpArray(string p_path[]);
+	short Traverse(vector<string> p_path);
 	void AddToFolder(int p_folderNumber, short p_added);
 	//member variables
 	MemoryBlock* m_memoryBlock;
