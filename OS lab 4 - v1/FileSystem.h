@@ -17,7 +17,7 @@ public:
 	//member methods
 	string Format();
 	vector<string> ls();												//doneish
-	string Create(const char* p_name, const char* p_contents);
+	string Create(char* p_name, char* p_contents);
 	string Cat(vector<string> p_path);
 	string Save(string p_path[]);
 	string Read(string p_path[]);
