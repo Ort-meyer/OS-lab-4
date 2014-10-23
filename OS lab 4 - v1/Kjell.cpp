@@ -48,11 +48,19 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "create")
 		{
+			char* t_name = const_cast<char*>(t_inputArray[1].c_str());
+			cout << "Content of file: " << endl;
+			string t_contentString;
+			getline(cin, t_contentString);
+			char* t_content = const_cast<char*>(t_contentString.c_str());
 
+			m_fileSystem->Create(t_name, t_content);
 		}
 		else if (t_inputArray[0] == "cat")
 		{
-
+			vector<string>t_path = Split(t_inputArray[1], "/");
+			string t_content = m_fileSystem->Cat(t_path);
+			cout << t_content;
 		}
 		else if (t_inputArray[0] == "save")
 		{

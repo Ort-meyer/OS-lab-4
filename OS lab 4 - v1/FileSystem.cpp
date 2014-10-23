@@ -66,7 +66,8 @@ string FileSystem::Cat(vector<string> p_path)
 	short t_blockToRead = Traverse(p_path);
 
 	//if target is folder, do nothing
-	if (m_memoryBlock->ReadType(t_blockToRead)) return "Target is a folder";
+	if (m_memoryBlock->ReadType(t_blockToRead) == 1) 
+		return "Target is a folder\n";
 
 	//file found, read content
 	string t_return;
