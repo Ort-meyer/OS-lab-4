@@ -1,10 +1,13 @@
 #include "FileSystem.h"
+#include <iostream>
+#include <stdio.h>
 
 FileSystem::FileSystem(MemoryBlock* p_memoryBlock)
 {
 	m_memoryBlock = p_memoryBlock;
 	m_blockCounter = 0;
 	m_currentBlock = -1;
+	CreateRootFolder("root");
 }
 
 
@@ -77,6 +80,7 @@ string FileSystem::Cat(vector<string> p_path)
 
 }
 
+
 string FileSystem::Save(string p_path)
 {
 	//save system on file
@@ -84,28 +88,70 @@ string FileSystem::Save(string p_path)
 	t_file.open(p_path); //ios::binary for optimization?
 	for (int i = 0; i < 250; i++)
 	{
-		if (m_memoryBlock->ReadType(i) != -1)
+		//if (m_memoryBlock->ReadType(i) != -2) //is initialized
 		{
 
-			char* t_name = m_memoryBlock->ReadName(i);
-			//figure out how many chars in name (silly fix since it stops reading at an empty byte)
-			char t_data[512];
-			string t_nameString = t_name;
+			//char* t_name = m_memoryBlock->ReadName(i);
+			////figure out how many chars in name (silly fix since it stops reading at an empty byte)
+			////cast name length
+			//string t_nameString = t_name;
+			//int t_nameLength = t_nameString.length();
+			//char* t_cNameLength = new char;
+			//memcpy(t_cNameLength, &t_nameLength, 4);
+			////cast next block
+			//char* t_cNextBlock= new char;
+			//short t_nextBlock = m_memoryBlock->ReadNextBlock(i);
+			//memcpy(t_cNextBlock, &t_nextBlock, 2);
+			////cast size
+			//char* t_cSize = new char;
+			//int t_size = m_memoryBlock->ReadSize(i);
+			//memcpy(t_cSize, &t_size, 4);
+			////cast parent block
+			//char* t_cParentBlock = new char;
+			//short t_parentBlock = m_memoryBlock->ReadParentBlock(i);
+			//memcpy(t_cParentBlock, &t_parentBlock, 2);
 
-			int t_nameLength = t_nameString.length();
-			//write data
-			//t_file << m_memoryBlock;
-			t_file << m_memoryBlock->ReadType(i);
-			t_file << t_nameLength;
-			t_file << t_name;
-			t_file << m_memoryBlock->ReadNextBlock(i);
-			t_file << m_memoryBlock->ReadSize(i);
-			t_file << m_memoryBlock->ReadParentBlock(i);
-			t_file << m_memoryBlock->ReadData(i);
-			t_file << endl;
+
+
+
+
+			////write data
+			////t_file << m_memoryBlock;
+			//t_file << m_memoryBlock->ReadType(i);
+			//t_file << t_cNameLength;
+			//t_file << t_name;
+			//t_file << t_cNextBlock;
+			//t_file << t_cSize;
+			//t_file << t_cParentBlock;
+			//t_file << m_memoryBlock->ReadData(i);
+			//t_file << endl;
+
+
+			//SECOND VERSION
+			char* t_data = m_memoryBlock->ReadBlock(i);
+			t_file << t_data << "\n";
+
+
+
+			//char* t_name = m_memoryBlock->ReadName(i);
+			//string t_nameString = t_name;
+			//int t_nameLength = t_nameString.length();
+
+			//t_file << m_memoryBlock->ReadType(i);
+			//t_file << t_nameLength;
+			//t_file << t_name;
+			//t_file << m_memoryBlock->ReadNextBlock(i);
+			//t_file << m_memoryBlock->ReadSize(i);
+			//t_file << m_memoryBlock->ReadParentBlock(i);
+			//t_file << m_memoryBlock->ReadData(i);
+			//t_file << endl;
+
+			
+			
+
 		}
 	}
-	t_file.close();
+	//t_file.close();
 	return "system saved\n";
 }
 string FileSystem::Read(string p_path)
@@ -122,35 +168,63 @@ string FileSystem::Read(string p_path)
 		{
 			if (!t_line.empty())
 			{
-				//get all data in one big char array
-				char* t_data = new char;
+				////get all data in one big char array
+				//char* t_data = new char;
+				//strcpy(t_data, t_line.c_str());
+				//int t_nameSize;
+				//memcpy(&t_nameSize, t_data + 1, 4);
+
+				//char t_name[20];
+				//memcpy(t_name, t_data + 5, 20);
+
+				//short* t_next = new short;
+				//memcpy(t_next, t_data + NEXTOFFSET+4, 2);
+
+				//int* t_size = new int;
+				//memcpy(t_size, t_data + SIZEOFFSET+4, 4);
+
+				//short* t_parent = new short;
+				//memcpy(t_parent, t_data + PARENTOFFSET+4, 2);
+
+				//char* t_blockData = new char;
+				//memcpy(t_blockData, t_blockData + DATAOFFSET+4, REMAINING);
+
+				//m_memoryBlock->WriteType(i, t_data[0]);
+				//m_memoryBlock->WriteName(i, t_name);
+				//m_memoryBlock->WriteNextBlock(i, *t_next);
+				//m_memoryBlock->WriteSize(i, *t_size);
+				//m_memoryBlock->WriteParentBlock(i, *t_parent);
+				//m_memoryBlock->WriteData(i, t_blockData);
+				//
+				
+
+				if (i > 511)
+				{
+					int derp;
+					derp = 1;
+				}
+				//SECOND VERSION
+				char t_data[512];
 				strcpy(t_data, t_line.c_str());
-				int t_nameSize;
-				memcpy(&t_nameSize, t_data + 1, 4);
-
-				char t_name[20];
-				memcpy(t_name, t_data + 2, 20);
-
-				short* t_next = new short;
-				memcpy(t_next, t_data + NEXTOFFSET, 2);
-
-				int* t_size = new int;
-				memcpy(t_size, t_data + SIZEOFFSET, 4);
-
-				short* t_parent = new short;
-				memcpy(t_parent, t_data + PARENTOFFSET, 2);
-
-				char* t_blockData = new char;
-				memcpy(t_blockData, t_blockData + DATAOFFSET, REMAINING);
-
-				m_memoryBlock->WriteType(i, t_data[0]);
-				m_memoryBlock->WriteName(i, t_name);
-				m_memoryBlock->WriteNextBlock(i, *t_next);
-				m_memoryBlock->WriteSize(i, *t_size);
-				m_memoryBlock->WriteParentBlock(i, *t_parent);
-				m_memoryBlock->WriteData(i, t_blockData);
+				m_memoryBlock->WriteBlock(i, t_data);
 				
 				i++;
+
+				//char* t_data = new char;
+				//strcpy(t_data, t_line.c_str());
+				//int t_nameLength = t_line[1];
+				//char t_name[20];
+				//memcpy(t_name, t_data + 2, 20);
+
+				//m_memoryBlock->WriteType(i, t_line[0]);
+				//m_memoryBlock->WriteName(i, t_name);
+				//m_memoryBlock->WriteNextBlock(i, );
+				//m_memoryBlock->WriteSize(i, *t_size);
+				//m_memoryBlock->WriteParentBlock(i, *t_parent);
+				//m_memoryBlock->WriteData(i, t_blockData);
+
+				//THIRD VERSION
+
 			}
 		}
 	}
@@ -187,26 +261,28 @@ string FileSystem::mkdir(const char* p_name)
 	//data that will be written
 	char t_data[512];
 
+	cout << GetType();
+
 	//information that will be written
 	char t_type = '1';
 	short t_next = -1;
 	int t_size = 0;
 	short t_parent = m_currentBlock;
-	short t_blocks[241]; //(int)(483/sizeof(short)) = 241. That many shorts
-
+	//short t_blocks[241]; //(int)(483/sizeof(short)) = 241. That many shorts
+	cout << GetType();
 
 	memcpy(t_data, &t_type, 1);
-	memcpy(t_data + NAMEOFFSET, p_name, 20);
+	memcpy(t_data + NAMEOFFSET, p_name, strlen(p_name));
 	memcpy(t_data + NEXTOFFSET, &t_next, 2);
 	memcpy(t_data + SIZEOFFSET, &t_size, 4);
 	memcpy(t_data + PARENTOFFSET, &t_parent, 2);
-	memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
-
+	//memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
+	cout << GetType();
 	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
-
+	cout << GetType();
 	//FOLDER IS CREATED. NOW WE ASSIGN IT TO CURRENT BLOCK
 	AddToFolder(t_parent, m_blockCounter);
-
+	cout << GetType() << endl;
 
 	m_blockCounter++;
 
@@ -224,7 +300,7 @@ string FileSystem::pwd()
 	return m_memoryBlock->ReadName(m_currentBlock);
 }
 
-string FileSystem::CreateRootFolder(char p_name[20])
+string FileSystem::CreateRootFolder(char* p_name)
 {
 	//data that will be written
 	char t_data[512];
@@ -237,11 +313,11 @@ string FileSystem::CreateRootFolder(char p_name[20])
 
 
 	memcpy(t_data, &t_type, 1);
-	memcpy(t_data + NAMEOFFSET, p_name, 20);
+	memcpy(t_data + NAMEOFFSET, p_name, strlen(p_name));
 	memcpy(t_data + NEXTOFFSET, &t_next, 2);
 	memcpy(t_data + SIZEOFFSET, &t_size, 4);
 	memcpy(t_data + PARENTOFFSET, &t_next, 2); //next works since root doesn't have a parent
-	memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
+	//memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
 
 	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
 	m_blockCounter++;
@@ -328,5 +404,7 @@ void FileSystem::AddToFolder(int p_folderNumber, short p_added)
 	}
 }
 
-
-
+char FileSystem::GetType()
+{
+	return m_memoryBlock->ReadType(1);
+}

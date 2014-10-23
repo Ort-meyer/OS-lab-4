@@ -5,7 +5,11 @@ MemoryBlock::MemoryBlock()
 {
 	for (int i = 0; i < 250; i++)
 	{
-		m_contents[i][0] = -1; //byte signaling unallocated block
+		for (int j = 0; j < 512; j++)
+		{
+			m_contents[i][j] = '-2';
+		}
+
 	}
 }
 
@@ -55,7 +59,7 @@ void MemoryBlock::WriteData(int p_blockNumber, char p_data[])
 void MemoryBlock::WriteFolderData(int p_blockNumber, short* p_data)
 {
 	int t_size = ReadSize(p_blockNumber);
-	memcpy(m_contents[p_blockNumber] + DATAOFFSET + t_size*2, p_data, REMAINING-1); //has to be even because short // Writes to end of data array
+	memcpy(m_contents[p_blockNumber] + DATAOFFSET + t_size*2, p_data, 2); //has to be even because short // Writes to end of data array
 }
 
 //read

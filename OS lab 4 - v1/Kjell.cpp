@@ -21,7 +21,6 @@ void Kjell::Start()
 
 	string t_input;
 	vector<string> t_inputArray;
-	m_fileSystem->CreateRootFolder("root");
 	while (t_running)
 	{
 		cout << "enter command: ";
@@ -69,6 +68,7 @@ void Kjell::Start()
 		else if (t_inputArray[0] == "read")
 		{
 			m_fileSystem->Read(t_inputArray[1]);
+			
 		}
 		else if (t_inputArray[0] == "rm")
 		{
@@ -106,6 +106,10 @@ void Kjell::Start()
 		else if (t_inputArray[0] == "help")
 		{
 
+		}
+		else if (t_inputArray[0] == "retard")
+		{
+			cout << m_fileSystem->GetType() << endl;
 		}
 
 		

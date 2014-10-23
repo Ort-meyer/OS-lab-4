@@ -24,6 +24,8 @@ private:
 	string ReadLine();
 	void DumpArray(string p_stringArray[]);
 
+	void RetardTest();
+
 
 
 

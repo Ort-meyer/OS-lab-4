@@ -22,6 +22,8 @@ public:
 	string Cat(vector<string> p_path);
 	string Save(string p_path);
 	string Read(string p_path);
+	string Save1(string p_path);
+	string Read1(string p_path);
 	string rm(string p_path[]);
 	string Copy(vector<string> p_path, vector<string> p_destination);
 	string Append(string p_source[], string p_destination[]);
@@ -30,8 +32,10 @@ public:
 	string cd(vector<string> p_path);									//done
 	string pwd();														//done
 
-	string CreateRootFolder(char p_name[20]);							//done
+	string CreateRootFolder(char* p_name);							//done
 
+
+	char GetType();
 
 private:
 	//member methods
@@ -45,6 +49,8 @@ private:
 
 	short m_blockCounter; //index for next avaliable block
 	vector<int> m_freeblocks; //list of avaliable bloocks (when blocks are removed their indices are put in this list)
+
+
 
 };
 
