@@ -60,7 +60,7 @@ void Kjell::Start()
 		{
 			vector<string>t_path = Split(t_inputArray[1], "/");
 			string t_content = m_fileSystem->Cat(t_path);
-			cout << t_content;
+			cout << t_content << endl;
 		}
 		else if (t_inputArray[0] == "save")
 		{
@@ -76,7 +76,10 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "copy")
 		{
+			vector<string>t_source = Split(t_inputArray[1], "/");
+			vector<string>t_destination = Split(t_inputArray[2], "/");
 
+			m_fileSystem->Copy(t_source, t_destination);
 		}
 		else if (t_inputArray[0] == "append")
 		{

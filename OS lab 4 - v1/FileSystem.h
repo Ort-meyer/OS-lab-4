@@ -18,8 +18,9 @@ public:
 	//member methods
 	string Format();													//done
 	vector<string> ls();												//doneish
-	string Create(char* p_name, char* p_contents);
-	string Cat(vector<string> p_path);
+	vector<string> ls(short p_block);
+	string Create(char* p_name, char* p_contents);						//done
+	string Cat(vector<string> p_path);									//done
 	string Save(string p_path);
 	string Read(string p_path);
 	string rm(string p_path[]);
@@ -29,7 +30,7 @@ public:
 	string mkdir(const char* p_name);									//doneish
 	string cd(vector<string> p_path);									//done
 	string pwd();														//done
-
+																		//nothing here \(^o^)/
 	string CreateRootFolder(char p_name[20]);							//done
 
 
