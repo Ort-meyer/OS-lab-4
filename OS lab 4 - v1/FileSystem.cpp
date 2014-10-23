@@ -151,26 +151,11 @@ string FileSystem::mkdir(const char* p_name)
 	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
 
 	//FOLDER IS CREATED. NOW WE ASSIGN IT TO CURRENT BLOCK
+	AddToFolder(t_parent, m_blockCounter);
 
-	//read parent data
-	//char* t_parentData = m_memoryBlock->ReadBlock(t_parent);
-	//int t_parentSize = 0;
-	//memcpy(&t_parentSize, t_parentData + SIZEOFFSET, 4);
-
-	int t_parentSize = m_memoryBlock->ReadSize(t_parent);
-
-	//add the folder
-	//memcpy(t_parentData + DATAOFFSET + t_parentSize * 2, &m_blockCounter, 2);
-	m_memoryBlock->WriteFolderData(t_parent, &m_blockCounter);
-
-	//add to parent size (since it now has another folder)
-	t_parentSize++; //another folder is added
-	m_memoryBlock->WriteSize(t_parent, t_parentSize);
-	//memcpy(t_parentData + SIZEOFFSET, &t_parentSize, 2);
-
-	//m_memoryBlock->WriteBlock(t_parent, t_parentData);
 
 	m_blockCounter++;
+
 	string derp;
 	return derp;
 }
