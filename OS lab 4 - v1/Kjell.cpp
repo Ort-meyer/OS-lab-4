@@ -76,7 +76,11 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "rename")
 		{
+			vector<string>t_path = Split(t_inputArray[1], "/");
+			const char* t_const = t_inputArray[2].c_str();
+			char* t_destination = const_cast<char*>(t_const);
 
+			m_fileSystem->Rename(t_path, t_destination);
 		}
 		else if (t_inputArray[0] == "mkdir")
 		{
@@ -89,7 +93,7 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "pwd")
 		{
-			cout << "Working directory: " << m_fileSystem->pwd() << endl;
+			//cout << "Working directory: " << m_fileSystem->pwd() << endl;
 		}
 		else if (t_inputArray[0] == "help")
 		{
