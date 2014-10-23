@@ -4,11 +4,7 @@
 #include <vector>
 
 
-#define NAMEOFFSET 1
-#define NEXTOFFSET 21
-#define SIZEOFFSET 23
-#define PARENTOFFSET 27
-#define DATAOFFSET 29
+
 
 using namespace std;
 class FileSystem
