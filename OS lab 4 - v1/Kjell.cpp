@@ -21,6 +21,7 @@ void Kjell::Start()
 
 	string t_input;
 	vector<string> t_inputArray;
+	m_fileSystem->CreateRootFolder("root");
 	while (t_running)
 	{
 		cout << "enter command: ";
@@ -39,7 +40,11 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "ls")
 		{
-
+			vector<string> t_contents =	m_fileSystem->ls();
+			for (int i = 0; i < t_contents.size(); i++)
+			{
+				cout << t_contents[i] << endl;
+			}
 		}
 		else if (t_inputArray[0] == "create")
 		{
@@ -75,11 +80,17 @@ void Kjell::Start()
 		}
 		else if (t_inputArray[0] == "mkdir")
 		{
-
+			m_fileSystem->mkdir(t_inputArray[1].c_str());
 		}
 		else if (t_inputArray[0] == "cd")
 		{
+			//remove 
+			vector<string>t_path = Split(t_inputArray[1], "/");
+			//	t_inputArray;
+			//t_path.erase(t_path.begin());
+			//t_path.shrink_to_fit();
 
+			cout << m_fileSystem->cd(t_path) << endl;
 		}
 		else if (t_inputArray[0] == "pwd")
 		{

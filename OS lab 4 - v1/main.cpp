@@ -49,7 +49,7 @@ void VoidExperiment()
 
 int main()
 {
-	VoidExperiment();
+	//VoidExperiment();
 	m_memoryBlock = new MemoryBlock();
 	m_fileSystem = new FileSystem(m_memoryBlock);
 	m_company = new Kjell(m_fileSystem);

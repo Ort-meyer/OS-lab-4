@@ -7,7 +7,10 @@ public:
 	~MemoryBlock();
 
 	//member methods
-	int WriteBlock(int p_blockNumber, char p_content[]);
+	//write
+	int WriteBlock(int p_blockNumber, char p_content[512]);
+
+	//read
 	char* ReadBlock(int p_blockNumber);
 
 private:
