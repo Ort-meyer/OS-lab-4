@@ -40,7 +40,7 @@ private:
 
 	short m_currentBlock; //the current folder the file system is in
 
-	int m_blockCounter; //index for next avaliable block
+	short m_blockCounter; //index for next avaliable block
 	vector<int> m_freeblocks; //list of avaliable bloocks (when blocks are removed their indices are put in this list)
 
 };

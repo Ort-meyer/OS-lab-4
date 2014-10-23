@@ -26,7 +26,10 @@ public:
 	void WriteNextBlock(int p_blockNumber, short p_nextBlocK);
 	void WriteSize(int p_blockNumber, int p_size);
 	void WriteParentBlock(int p_blockNumber, short p_parentBlock);
-	void WriteData(int p_blockNumber, char[]);
+	void WriteData(int p_blockNumber, char p_data[]);
+	//really specific writes
+	void WriteFolderData(int p_blockNumber, short* p_data);
+
 	//read
 	char* ReadBlock(int p_blockNumber);
 	//specific reads
@@ -36,6 +39,8 @@ public:
 	int ReadSize(int p_blockNumber);
 	short ReadParentBlock(int p_blockNumber);
 	char* ReadData(int p_blockNumber);
+	//really specific reads
+	short* ReadFolderData(int p_blockNumber);
 
 
 private:

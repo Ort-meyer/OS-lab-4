@@ -23,26 +23,29 @@ string FileSystem::Format()
 }
 vector<string> FileSystem::ls()
 {
+
+	vector<string> t_contentNames;
 	//get the data
 	char* t_data = m_memoryBlock->ReadBlock(m_currentBlock);
 
 	//read size
-	int t_numContent;
-	memcpy(&t_numContent, t_data + SIZEOFFSET, 4);
+	int t_numContent = m_memoryBlock->ReadSize(m_currentBlock);
+	//memcpy(&t_numContent, t_data + SIZEOFFSET, 4);
+	// t_contentBlocks = new short;
+	 short* t_contentBlocks = m_memoryBlock->ReadFolderData(m_currentBlock);
+	
+	//memcpy(t_contentBlocks, t_data + DATAOFFSET, t_numContent * 2); //t_numContent*2 since each short is two bytes
 
-	short* t_contentBlocks = new short;
-	memcpy(t_contentBlocks, t_data + DATAOFFSET, t_numContent * 2); //t_numContent*2 since each short is two bytes
-
-	vector<string> t_contentNames;
+	//vector<string> t_contentNames;
 	for (int i = 0; i < t_numContent; i++)
 	{
-		char* t_currentData = m_memoryBlock->ReadBlock(t_contentBlocks[i]);
-		char* t_currentBlockName = new char;
-		memcpy(t_currentBlockName, t_currentData + NAMEOFFSET, 20);
+		//char* t_currentData = m_memoryBlock->ReadBlock(t_contentBlocks[i]);
+		//char* t_currentBlockName = new char;
+		//memcpy(t_currentBlockName, t_currentData + NAMEOFFSET, 20);
+		char* t_currentBlockName = m_memoryBlock->ReadName(t_contentBlocks[i]);
 		string t_string;
 		t_contentNames.push_back(t_string.assign(t_currentBlockName));
 	}
-
 	return t_contentNames;
 }
 //string FileSystem::Create(string p_path[], char p_contents[])
@@ -94,15 +97,8 @@ string FileSystem::mkdir(const char* p_name)
 	memcpy(t_data + NAMEOFFSET, p_name, 20);
 	memcpy(t_data + NEXTOFFSET, &t_next, 2);
 	memcpy(t_data + SIZEOFFSET, &t_size, 4);
-	memcpy(t_data + PARENTOFFSET, &t_parent, 2); //next works since root doesn't have a parent
+	memcpy(t_data + PARENTOFFSET, &t_parent, 2); 
 	memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
-
-	/////////TESTSTUFF///////////
-
-
-
-
-
 
 	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
 
@@ -111,18 +107,22 @@ string FileSystem::mkdir(const char* p_name)
 	//FOLDER IS CREATED. NOW WE ASSIGN IT TO CURRENT BLOCK
 
 	//read parent data
-	char* t_parentData = m_memoryBlock->ReadBlock(t_parent);
-	int t_parentSize = 0;
-	memcpy(&t_parentSize, t_parentData + SIZEOFFSET, 4);
+	//char* t_parentData = m_memoryBlock->ReadBlock(t_parent);
+	//int t_parentSize = 0;
+	//memcpy(&t_parentSize, t_parentData + SIZEOFFSET, 4);
+
+	int t_parentSize = m_memoryBlock->ReadSize(t_parent);
 
 	//add the folder
-	memcpy(t_parentData + DATAOFFSET + t_parentSize * 2, &m_blockCounter, 2);
+	//memcpy(t_parentData + DATAOFFSET + t_parentSize * 2, &m_blockCounter, 2);
+	m_memoryBlock->WriteFolderData(t_parent, &m_blockCounter);
 
 	//add to parent size (since it now has another folder)
 	t_parentSize++; //another folder is added
-	memcpy(t_parentData + SIZEOFFSET, &t_parentSize, 2);
+	m_memoryBlock->WriteSize(t_parent, t_parentSize);
+	//memcpy(t_parentData + SIZEOFFSET, &t_parentSize, 2);
 
-	m_memoryBlock->WriteBlock(t_parent, t_parentData);
+	//m_memoryBlock->WriteBlock(t_parent, t_parentData);
 
 	m_blockCounter++;
 	string derp;

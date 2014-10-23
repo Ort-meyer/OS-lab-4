@@ -47,6 +47,12 @@ void MemoryBlock::WriteData(int p_blockNumber, char p_data[])
 	memcpy(m_contents[p_blockNumber] + DATAOFFSET, p_data, REMAINING);
 }
 
+//really specific writes
+void MemoryBlock::WriteFolderData(int p_blockNumber, short* p_data)
+{
+	int t_size = ReadSize(p_blockNumber);
+	memcpy(m_contents[p_blockNumber] + DATAOFFSET + t_size*2, p_data, REMAINING-1); //has to be even because short // Writes to end of data array
+}
 
 //read
 char* MemoryBlock::ReadBlock(int p_blockNumber)
@@ -63,8 +69,8 @@ char  MemoryBlock::ReadType(int p_blockNumber)
 }
 char* MemoryBlock::ReadName(int p_blockNumber)
 {
-	char* t_name;
-	memcpy(t_name, m_contents[p_blockNumber] + NAMEOFFSET, 1);
+	char* t_name = new char[20];
+	memcpy(t_name, m_contents[p_blockNumber] + NAMEOFFSET, 20);
 	return t_name;
 }
 short MemoryBlock::ReadNextBlock(int p_blockNumber)
@@ -87,8 +93,15 @@ short MemoryBlock::ReadParentBlock(int p_blockNumber)
 }
 char* MemoryBlock::ReadData(int p_blockNumber)
 {
-	char* t_data;
+	char* t_data = new char;
 	memcpy(t_data, m_contents[p_blockNumber]+DATAOFFSET, REMAINING);
+	return t_data;
+}
+
+short* MemoryBlock::ReadFolderData(int p_blockNumber)
+{
+	short* t_data = new short [REMAINING-1];
+	memcpy(t_data, m_contents[p_blockNumber] + DATAOFFSET, REMAINING-1); //has to be even because short
 	return t_data;
 }
 
