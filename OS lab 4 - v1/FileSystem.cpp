@@ -33,7 +33,7 @@ vector<string> FileSystem::ls()
 	int t_numContent = m_memoryBlock->ReadSize(m_currentBlock);
 	//memcpy(&t_numContent, t_data + SIZEOFFSET, 4);
 	// t_contentBlocks = new short;
-	 short* t_contentBlocks = m_memoryBlock->ReadFolderData(m_currentBlock);
+	short* t_contentBlocks = m_memoryBlock->ReadFolderData(m_currentBlock);
 
 	//memcpy(t_contentBlocks, t_data + DATAOFFSET, t_numContent * 2); //t_numContent*2 since each short is two bytes
 
@@ -61,7 +61,7 @@ string FileSystem::Create(char* p_name, char* p_contents)
 
 	//memcpy(t_data, &t_type, sizeof(short));
 	//memcpy(t_data + NAMEOFFSET, &p_name, sizeof(p_name));
-	
+
 	m_memoryBlock->WriteType(m_blockCounter, '0');
 	m_memoryBlock->WriteName(m_blockCounter, p_name);
 	m_memoryBlock->WriteNextBlock(m_blockCounter, -1);
@@ -81,8 +81,53 @@ string FileSystem::Cat(vector<string> p_path)
 	//write content in file
 	//traverse path
 
-	short t_blockToRead = Traverse(p_path);
-	
+	short t_blockToRead = m_currentBlock;
+	int t_pathLength = p_path.size();
+	int t_currentPathSegment = 0;
+	//keep searching 'till path is empty
+	while (t_currentPathSegment < t_pathLength)
+	{
+		//get all subfolder names
+		vector<string>t_currentContent = ls();
+		//get subfolder indices
+		char* t_currentData = m_memoryBlock->ReadBlock(m_currentBlock);
+		short* t_currentContentIndices = new short;
+		memcpy(t_currentContentIndices, t_currentData + DATAOFFSET, t_currentContent.size() * 2);
+
+		bool t_folderFound = false;
+
+		if (p_path[t_currentPathSegment] == "..")
+		{
+			short* t_currentParent = new short;
+			memcpy(t_currentParent, t_currentData + PARENTOFFSET, 2);
+			if (*t_currentParent == -1)
+			{
+				return "Invalid search path";
+			}
+			else
+			{
+				t_blockToRead = *t_currentParent;
+			}
+		}
+
+		//compare subfolder names to path
+		for (int i = 0; i < t_currentContent.size(); i++)
+		{
+			//check if path is found
+			if (p_path[t_currentPathSegment] == t_currentContent[i])
+			{
+				t_blockToRead = t_currentContentIndices[i];
+				t_currentPathSegment++;
+				t_folderFound = true;
+				break;
+			}
+		}
+		if (!t_folderFound)
+		{
+			return "no such folder";
+		}
+
+	}
 	//if target is folder, do nothing
 	if (m_memoryBlock->ReadType(t_blockToRead)) return "Target is a folder";
 
@@ -118,15 +163,10 @@ string FileSystem::Copy(vector<string> p_path, vector<string> p_destination)
 //{
 //	//append file
 //}
-
-string FileSystem::Rename(vector<string> p_source, string p_destination)
-{
-	//rename file
-	short t_block = Traverse(p_source);
-	
-	return "File renamed";
-}
-
+//string FileSystem::Rename(string p_source[], string p_destination[])
+//{
+//	//rename file
+//}
 string FileSystem::mkdir(const char* p_name)
 {
 	//data that will be written
@@ -144,7 +184,7 @@ string FileSystem::mkdir(const char* p_name)
 	memcpy(t_data + NAMEOFFSET, p_name, 20);
 	memcpy(t_data + NEXTOFFSET, &t_next, 2);
 	memcpy(t_data + SIZEOFFSET, &t_size, 4);
-	memcpy(t_data + PARENTOFFSET, &t_parent, 2); 
+	memcpy(t_data + PARENTOFFSET, &t_parent, 2);
 	memcpy(t_data + DATAOFFSET, &t_blocks, 483); //483 = 512 - above bytes.
 
 	m_memoryBlock->WriteBlock(m_blockCounter, t_data);
@@ -176,13 +216,64 @@ string FileSystem::mkdir(const char* p_name)
 
 string FileSystem::cd(vector<string> p_path)
 {
-	m_currentBlock = Traverse(p_path);
+	int t_startBlockIndex = m_currentBlock;
+	int t_pathLength = p_path.size();
+	int t_currentPathSegment = 0;
+	//keep searching 'till path is empty
+	while (t_currentPathSegment < t_pathLength)
+	{
+		//get all subfolder names
+		vector<string>t_currentContent = ls();
+		//get subfolder indices
+		char* t_currentData = m_memoryBlock->ReadBlock(m_currentBlock);
+		short* t_currentContentIndices = new short;
+		memcpy(t_currentContentIndices, t_currentData + DATAOFFSET, t_currentContent.size() * 2);
+
+		bool t_folderFound = false;
+
+		if (p_path[t_currentPathSegment] == "..")
+		{
+			short* t_currentParent = new short;
+			memcpy(t_currentParent, t_currentData + PARENTOFFSET, 2);
+			if (*t_currentParent == -1)
+			{
+				return "n00b. Root ain't got no parent";
+			}
+			else
+			{
+				m_currentBlock = *t_currentParent;
+				return "directory changed";
+			}
+		}
+
+		//compare subfolder names to path
+		for (int i = 0; i < t_currentContent.size(); i++)
+		{
+			//check if path is found
+			if (p_path[t_currentPathSegment] == t_currentContent[i])
+			{
+				m_currentBlock = t_currentContentIndices[i];
+				t_currentPathSegment++;
+				t_folderFound = true;
+				break;
+			}
+		}
+		if (!t_folderFound)
+		{
+			m_currentBlock = t_startBlockIndex;
+			return "no such folder";
+		}
+
+
+
+
+	}
 	return "directory changed";
 }
-//string FileSystem::pwd()
-//{
-//	//write name of folder
-//}
+string FileSystem::pwd()
+{
+	return m_memoryBlock->ReadName(m_currentBlock);
+}
 
 string FileSystem::CreateRootFolder(char p_name[20])
 {
@@ -211,56 +302,20 @@ string FileSystem::CreateRootFolder(char p_name[20])
 	return derp;
 }
 
-short FileSystem::Traverse(vector<string> p_path)
+void FileSystem::AddToFolder(int p_folderNumber, short p_added)
 {
-	short t_targetBlock;
-
-	int t_pathLength = p_path.size();
-	int t_currentPathSegment = 0;
-	//keep searching 'till path is empty
-	while (t_currentPathSegment < t_pathLength)
+	//Check if block is full
+	int t_parentSize = m_memoryBlock->ReadSize(p_folderNumber);
+	if (t_parentSize <= REMAINING - 1)//there' space left
 	{
-		//get all subfolder names
-		vector<string>t_currentContent = ls();
-		//get subfolder indices
-		char* t_currentData = m_memoryBlock->ReadBlock(m_currentBlock);
-		short* t_currentContentIndices = new short;
-		memcpy(t_currentContentIndices, t_currentData + DATAOFFSET, t_currentContent.size() * 2);
-
-		bool t_folderFound = false;
-
-		if (p_path[t_currentPathSegment] == "..")
-		{
-			short* t_currentParent = new short;
-			memcpy(t_currentParent, t_currentData + PARENTOFFSET, 2);
-			if (*t_currentParent == -1)
-			{
-				return -1;
-			}
-			else
-			{
-				t_targetBlock = *t_currentParent;
-				return t_targetBlock;
-			}
-		}
-
-		//compare subfolder names to path
-		for (int i = 0; i < t_currentContent.size(); i++)
-		{
-			//check if path is found
-			if (p_path[t_currentPathSegment] == t_currentContent[i])
-			{
-				t_targetBlock = t_currentContentIndices[i];
-				t_currentPathSegment++;
-				t_folderFound = true;
-				break;
-			}
-		}
-		if (!t_folderFound)
-		{
-			return -1;
-		}
+		//add the folder
+		m_memoryBlock->WriteFolderData(p_folderNumber, &p_added);
+		//update the size
+		t_parentSize++;
+		m_memoryBlock->WriteSize(p_folderNumber, t_parentSize);
 	}
-
-	return t_targetBlock;
+	else
+	{
+		//write to new block
+	}
 }
