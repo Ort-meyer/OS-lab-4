@@ -41,7 +41,7 @@ public:
 	char* ReadData(int p_blockNumber);
 	//really specific reads
 	short* ReadFolderData(int p_blockNumber);
-
+	char GetContent(int block, int byte);
 
 private:
 	char m_contents[250][512];

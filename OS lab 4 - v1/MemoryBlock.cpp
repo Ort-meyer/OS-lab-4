@@ -3,14 +3,14 @@
 
 MemoryBlock::MemoryBlock()
 {
-	for (int i = 0; i < 250; i++)
-	{
-		for (int j = 0; j < 512; j++)
-		{
-			m_contents[i][j] = '-2';
-		}
+	//for (int i = 0; i < 250; i++)
+	//{
+	//	for (int j = 0; j < 512; j++)
+	//	{
+	//		m_contents[i][j] = '-2';
+	//	}
 
-	}
+	//}
 }
 
 
@@ -27,6 +27,11 @@ int MemoryBlock::WriteBlock(int p_blockNumber, char p_content[512])
 		m_contents[p_blockNumber][i] = p_content[i];
 	}
 	return 42;
+}
+
+char MemoryBlock::GetContent(int block, int byte)
+{
+	return m_contents[block][byte];
 }
 
 //write specifics

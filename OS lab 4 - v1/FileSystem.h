@@ -21,7 +21,7 @@ public:
 	vector<string> ls(short p_block);									//done
 	string Create(char* p_name, char* p_contents);						//done
 	string Cat(vector<string> p_path);									//done
-	string Save(string p_path);
+	string Save(string p_path);											//done
 	string Read(string p_path);
 	string Save1(string p_path);
 	string Read1(string p_path);
